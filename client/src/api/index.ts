@@ -3,6 +3,8 @@ import { axiosForBackend } from '@lark-apaas/client-toolkit/utils/getAxiosForBac
 import type {
   CreateResearchProjectRequest,
   CreateResourceEntryRequest,
+  CodexJobItem,
+  ProjectCockpitDetail,
   ResearchAdminOverview,
   ResearchProjectItem,
   ResourceEntryItem,
@@ -57,5 +59,40 @@ export const createResourceEntry = async (
     return response.data as ResourceEntryItem;
   } catch (error: unknown) {
     throw normalizeError(error, '新增资源入口失败');
+  }
+};
+
+export const getProjectCockpit = async (projectId: string): Promise<ProjectCockpitDetail> => {
+  try {
+    const response = await axiosForBackend({
+      url: `/api/research-admin/projects/${projectId}/cockpit`, method: 'GET',
+    });
+    return response.data as ProjectCockpitDetail;
+  } catch (error: unknown) {
+    throw normalizeError(error, '加载项目驾驶舱失败');
+  }
+};
+
+export const approveProjectTask = async (
+  taskId: string,
+): Promise<ProjectCockpitDetail> => {
+  try {
+    const response = await axiosForBackend({
+      url: `/api/research-admin/tasks/${taskId}/approve`, method: 'POST',
+    });
+    return response.data as ProjectCockpitDetail;
+  } catch (error: unknown) {
+    throw normalizeError(error, '确认任务失败');
+  }
+};
+
+export const createContinueJob = async (projectId: string): Promise<CodexJobItem> => {
+  try {
+    const response = await axiosForBackend({
+      url: `/api/research-admin/projects/${projectId}/jobs/continue`, method: 'POST',
+    });
+    return response.data as CodexJobItem;
+  } catch (error: unknown) {
+    throw normalizeError(error, '创建继续执行作业失败');
   }
 };

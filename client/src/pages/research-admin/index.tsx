@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   Archive,
+  Activity,
   ArrowUpRight,
   BriefcaseBusiness,
   CheckCircle2,
@@ -24,6 +25,7 @@ import type {
   ResearchProjectItem,
   ResourceEntryItem,
 } from '@shared/api.interface';
+import { STATUS_LABELS } from '@shared/status-labels';
 
 import {
   createResearchProject,
@@ -59,6 +61,8 @@ import {
 } from '../../components/ui/select';
 import { Skeleton } from '../../components/ui/skeleton';
 import { Textarea } from '../../components/ui/textarea';
+import { Progress } from '../../components/ui/progress';
+import { ProjectCockpitDialog } from './project-cockpit-dialog';
 
 interface ProjectFormState {
   name: string;
@@ -192,6 +196,8 @@ const ResearchAdminPage: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [projectDialogOpen, setProjectDialogOpen] = useState<boolean>(false);
   const [resourceDialogOpen, setResourceDialogOpen] = useState<boolean>(false);
+  const [cockpitOpen, setCockpitOpen] = useState<boolean>(false);
+  const [selectedProject, setSelectedProject] = useState<ResearchProjectItem | null>(null);
   const [projectForm, setProjectForm] = useState<ProjectFormState>(PROJECT_INITIAL);
   const [resourceForm, setResourceForm] = useState<ResourceFormState>(RESOURCE_INITIAL);
 
@@ -364,10 +370,19 @@ const ResearchAdminPage: React.FC = () => {
                           <CardTitle className="text-lg">{project.name}</CardTitle>
                           <CardDescription className="mt-1">{project.clientName || '未填写客户名'} · {project.category}</CardDescription>
                         </div>
-                        <Badge className="bg-slate-950 text-white">进行中</Badge>
+                        <div className="flex flex-wrap gap-2">
+                          <Badge className="bg-slate-950 text-white">{STATUS_LABELS[project.codexStatus] || project.codexStatus}</Badge>
+                          <Badge variant="outline" className={project.bridgeOnline ? 'text-emerald-700' : 'text-slate-500'}>
+                            Bridge {project.bridgeOnline ? '在线' : '离线'}
+                          </Badge>
+                        </div>
                       </div>
                     </CardHeader>
                     <CardContent>
+                      <div className="mb-4">
+                        <div className="mb-2 flex items-center justify-between text-sm"><span className="font-medium text-slate-700">项目进度</span><span className="text-lg font-semibold text-slate-950">{project.progressPercent}%</span></div>
+                        <Progress value={project.progressPercent} />
+                      </div>
                       <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
                         <p className="text-xs font-medium uppercase tracking-wider text-amber-700">当前阶段快照</p>
                         <p className="mt-1 font-medium text-amber-950">{project.stageSnapshot}</p>
@@ -376,6 +391,16 @@ const ResearchAdminPage: React.FC = () => {
                         <LockKeyhole className="mt-1 size-4 shrink-0 text-slate-400" />
                         <span>{project.statusNote || '本后台不推进研究状态。'}</span>
                       </div>
+                      <div className="mt-4 grid gap-2 rounded-xl bg-slate-50 p-4 text-sm text-slate-600 sm:grid-cols-2">
+                        <p><span className="text-slate-400">当前任务：</span>{project.currentTask || '尚未同步'}</p>
+                        <p><span className="text-slate-400">下一步：</span>{project.nextAction || '待确认'}</p>
+                        <p><span className="text-slate-400">待我确认：</span>{project.pendingApprovals} 项</p>
+                        <p><span className="text-slate-400">最近同步：</span>{project.lastSyncedAt ? new Date(project.lastSyncedAt).toLocaleString('zh-CN') : '尚未同步'}</p>
+                      </div>
+                      {project.blocker ? <p className="mt-3 text-sm text-rose-700">阻塞：{project.blocker}</p> : null}
+                      <Button className="mt-4" variant="outline" onClick={() => { setSelectedProject(project); setCockpitOpen(true); }}>
+                        <Activity className="size-4" />查看进度
+                      </Button>
                     </CardContent>
                   </Card>
                 ))}
@@ -459,6 +484,12 @@ const ResearchAdminPage: React.FC = () => {
           <DialogFooter><Button onClick={() => void handleCreateResource()} disabled={saving}>{saving ? '正在保存…' : '保存入口'}</Button></DialogFooter>
         </DialogContent>
       </Dialog>
+      <ProjectCockpitDialog
+        project={selectedProject}
+        open={cockpitOpen}
+        onOpenChange={setCockpitOpen}
+        onChanged={loadOverview}
+      />
     </div>
   );
 };
