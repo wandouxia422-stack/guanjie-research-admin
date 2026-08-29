@@ -19,6 +19,15 @@
 - 已核验资产与旧链接、Demo、未核验项目分离。
 - 研究状态只作人工快照，不会自动推进品牌研究。
 
+## V1.1 项目驾驶舱
+
+- 按已完成任务权重由后端统一计算项目进度。
+- 六阶段“品牌全案”默认模板，新项目可复用，关键节点需人工确认。
+- 项目任务、交付物、阻塞、最近事件和 Bridge 在线状态统一展示。
+- 本地 Codex Bridge 恢复会话并处理“继续执行”队列；离线时作业安全保留。
+
+详细部署见 [`docs/codex-bridge-setup.md`](docs/codex-bridge-setup.md) 和 [`docs/codex-hook-install.md`](docs/codex-hook-install.md)。
+
 ## 首批正式资产
 
 - 流心兔品牌全案。

@@ -1,0 +1,20 @@
+{
+  "name": "@guanjie/codex-bridge",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx bridge.ts",
+    "health": "tsx health-check.ts",
+    "type:check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@openai/codex-sdk": "0.150.1",
+    "dotenv": "^17.2.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.6",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.2"
+  }
+}

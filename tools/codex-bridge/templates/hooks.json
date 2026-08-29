@@ -1,0 +1,8 @@
+{
+  "hooks": {
+    "SessionStart": [{ "command": "npx tsx /absolute/path/to/guanjie-research-admin/tools/codex-bridge/hook-reporter.ts SessionStart" }],
+    "PostToolUse": [{ "command": "npx tsx /absolute/path/to/guanjie-research-admin/tools/codex-bridge/hook-reporter.ts PostToolUse" }],
+    "Stop": [{ "command": "npx tsx /absolute/path/to/guanjie-research-admin/tools/codex-bridge/hook-reporter.ts Stop" }],
+    "SessionEnd": [{ "command": "npx tsx /absolute/path/to/guanjie-research-admin/tools/codex-bridge/hook-reporter.ts SessionEnd" }]
+  }
+}
